@@ -1,0 +1,49 @@
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress_container
+    depends_on:
+      mariadb:
+        condition : service_healthy
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      WP_ADMIN: ${WP_ADMIN}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+  
+  # nginx:
+  #   build: ./requirements/nginx
+  #   container_name: nginx_container
+  #   depends_on:
+  #     wordpress:
+  #       condition : service_started
+  #   ports:
+  #     - "443:443"
+
+volumes:
+  mariadb_data:
+
+networks:
+  inception_network:
+    driver: bridge
