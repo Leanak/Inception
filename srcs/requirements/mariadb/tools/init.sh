@@ -54,4 +54,4 @@ echo "Lancement du serveur MariaDB..."
 
 mkdir -p /run/mysqld
 chown mysql:mysql /run/mysqld
-exec mariadbd --user=mysql
+exec mariadbd --user=mysql --bind-address=0.0.0.0
