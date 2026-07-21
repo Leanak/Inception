@@ -1,15 +1,12 @@
 FROM debian:13.6
 
 RUN apt-get update && apt-get install -y \
-		php-fpm \
+	php-fpm \
         php-cli \
-		php-mysql \
-		php-gd \
-		php-xml \
-		php-curl \
-		php-mbstring \
-		wget \
-		tar \
+	php-mysql \
+	php-curl \
+	wget \
+	tar \
         curl \
         mariadb-client
        

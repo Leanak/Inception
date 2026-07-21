@@ -35,10 +35,11 @@ then
         --admin_email=${WP_ADMIN_EMAIL} \
         --allow-root
 
-    wp user creqte --allow-root \
+    wp user create --allow-root \
 	    ${USER1_LOGIN} ${USER1_MAIL} \
 	    --role=author \
 	    --user_pass=${USER1_PASSWORD}
 fi
 
+mkdir -p /run/php
 exec php-fpm8.4 -F

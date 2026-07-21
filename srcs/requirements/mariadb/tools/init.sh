@@ -13,8 +13,8 @@ then
 		--user=mysql \
 		--datadir="${DATADIR}"
 
-    mkdir -p /run/mysqld
-    chown mysql:mysql /run/mysqld
+    	mkdir -p /run/mysqld
+    	chown mysql:mysql /run/mysqld
 
 	mariadbd \
 		--user=mysql \
@@ -22,7 +22,7 @@ then
 
 	until mysqladmin ping --silent
 	do
-        echo "Attente du démarrage de MariaDB..."
+        	echo "Attente du démarrage de MariaDB..."
 		sleep 1
 	done
 
@@ -36,7 +36,7 @@ then
 
 	mariadb -e "FLUSH PRIVILEGES;"
 
-    mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
+	mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
 
 	echo "Arrêt du serveur temporaire..."
 

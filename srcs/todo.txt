@@ -1,0 +1,5 @@
+- Docker secret pour mettre les infos secretes dans le dossier compose ou le .env
+- Mettre les volumes dans /home/lenakach/data
+- README
+- USER_DOC
+- DEV_DOC

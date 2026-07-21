@@ -28,6 +28,8 @@ services:
     depends_on:
       mariadb:
         condition : service_healthy
+    env_file:
+      - .env
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
@@ -38,16 +40,21 @@ services:
       WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
   
   nginx:
-    build: ./requirements/nginx
+    build:
+      context: ./requirements/nginx
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     container_name: nginx_container
+    ports:
+      - "443:443" 
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
     depends_on:
       - wordpress
-    ports:
-      - "443:443"
+    env_file:
+      - .env
 
 volumes:
   mariadb_data:
@@ -55,4 +62,5 @@ volumes:
 
 networks:
   inception_network:
-    driver: bridge
+
+#driver: bridge

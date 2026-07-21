@@ -1,6 +1,10 @@
+ARG DOMAIN_NAME
+
 FROM debian:13.6
 
-RUN apt-get update && apt-get install -y \
+ARG DOMAIN_NAME
+
+RUN apt-get update -y && apt-get install -y \
     nginx \
     openssl
 
@@ -13,6 +17,8 @@ RUN mkdir -p /etc/nginx/ssl && \
     -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=leakache.42.fr"
 
 COPY conf/nginx.conf /etc/nginx/sites-available/default
+
+#RUN nginx -t
 
 EXPOSE 443
 
