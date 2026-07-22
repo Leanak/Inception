@@ -26,6 +26,11 @@ services:
     networks:
       - inception_network
     restart: always
+    healthcheck:
+      test: ["CMD", "pgrep", "php-fp;8,4"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       mariadb:
         condition : service_healthy
@@ -53,8 +58,14 @@ services:
     networks:
       - inception_network
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-k", "https://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       - wordpress
+        condition: service_healthy
     env_file:
       - .env
 

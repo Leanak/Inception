@@ -18,7 +18,7 @@ RUN mkdir -p /etc/nginx/ssl && \
 
 COPY conf/nginx.conf /etc/nginx/sites-available/default
 
-#RUN nginx -t
+RUN nginx -t
 
 EXPOSE 443
 
