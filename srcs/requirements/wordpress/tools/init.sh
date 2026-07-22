@@ -28,7 +28,7 @@ then
         --allow-root
 
     wp core install \
-        --url=https://{DOMAIN_NAME} \
+        --url=https://${DOMAIN_NAME} \
         --title="Inception" \
         --admin_user=${WP_ADMIN} \
         --admin_password=${WP_ADMIN_PASSWORD} \
