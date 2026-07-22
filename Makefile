@@ -6,7 +6,7 @@ all : build up
 
 build :
 	mkdir -p $(DATA)/mariadb $(DATA)/wordpress
-	docker compose -f srs/docker-compose.yml up --build -d
+	docker compose -f srcs/docker-compose.yml up --build -d
 
 up:
 	docker compose -f srcs/docker-compose.yml up -d
