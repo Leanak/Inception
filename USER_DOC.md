@@ -1,112 +1,93 @@
-# USER_DOC — Guide d'utilisation
+# Description
 
-Ce document explique comment lancer, utiliser et arrêter le projet
-Inception au quotidien, sans entrer dans le détail technique de
-l'implémentation (voir `DEV_DOC.md` pour ça).
+This project has been created as part of the 42 curriculum by lenakach. 
 
-## 1. Prérequis avant le premier lancement
+Infrastructure Docker complète servant un site WordPress, orchestrée via
+Docker Compose, avec des images construites entièrement à la main
+(aucune image "ready-made" tirée du Docker Hub).
 
-1. Docker et le plugin Compose installés :
-   ```bash
-   docker --version
-   docker compose version
-   ```
-2. Ajouter le domaine dans `/etc/hosts` (remplace `<IP_VM>` par l'IP de
-   ta machine/VM si tu n'es pas en local) :
-   ```
-   127.0.0.1   leakache.42.fr
-   ```
-3. Vérifier/adapter le fichier `srcs/.env` (voir section 4).
+> Projet : `Inception` — 42 School
+> Login : `lenakach`
+> Domaine : `leakache.42.fr`
 
-## 2. Lancer le projet
+---
 
-Depuis la racine du repo :
+## Instructions
+
+Le projet met en place trois conteneurs qui communiquent sur un réseau
+Docker dédié :
+
+| Service      | Rôle                                                    | Base image     |
+|--------------|----------------------------------------------------------|----------------|
+| `nginx`      | Reverse proxy / point d'entrée HTTPS (TLSv1.2 / TLSv1.3)  | Debian 13.6    |
+| `wordpress`  | WordPress + PHP-FPM (sans serveur web embarqué)           | Debian 13.6    |
+| `mariadb`    | Base de données du site WordPress                         | Debian 13.6    |
+
+Chaque service :
+- possède son propre `Dockerfile`, construit depuis Alpine ou Debian (jamais une image toute faite) ;
+- tourne dans son propre conteneur, redémarre automatiquement (`restart: always`) ;
+- communique avec les autres uniquement via le réseau `inception_network`.
+
+Les données persistantes (base MariaDB, fichiers WordPress) sont stockées
+sur la machine hôte, sous `/home/lenakach/data/`, via des volumes Docker.
+
+## Structure du projet
+
+```
+.
+├── Makefile
+└── srcs/
+    ├── .env
+    ├── docker-compose.yml
+    ├── todo.txt
+    └── requirements/
+        ├── mariadb/
+        │   ├── Dockerfile
+        │   └── tools/init.sh
+        ├── nginx/
+        │   ├── Dockerfile
+        │   └── conf/nginx.conf
+        └── wordpress/
+            ├── Dockerfile
+            └── tools/init.sh
+```
+
+## Démarrage rapide
 
 ```bash
+git clone <url-du-repo> inception
+cd inception
 make
 ```
 
-Cette commande :
-- crée les dossiers de données sur l'hôte (`/home/lenakach/data/mariadb`,
-  `/home/lenakach/data/wordpress`) s'ils n'existent pas ;
-- build les 3 images Docker ;
-- démarre les conteneurs en arrière-plan.
-
-Vérifier que tout tourne :
-
-```bash
-docker ps
-```
-
-Tu dois voir `mariadb_container`, `wordpress_container` et
-`nginx_container` avec le statut `Up`.
-
-## 3. Accéder au site
-
-Ouvre dans ton navigateur :
+Une fois les conteneurs up, le site est accessible à l'adresse :
 
 ```
 https://leakache.42.fr
 ```
 
-Le certificat étant auto-signé, le navigateur affiche un avertissement de
-sécurité — c'est normal, clique sur "Continuer" / "Avancé" pour accéder au
-site.
+(après avoir ajouté l'entrée correspondante dans `/etc/hosts`, voir `USER_DOC.md`).
 
-### Accès administrateur WordPress
+## Resources
 
-```
-https://leakache.42.fr/wp-admin
-```
+- [`USER_DOC.md`](./USER_DOC.md) — utilisation courante : lancer/arrêter le projet,
+  se connecter au site, gérer WordPress, dépanner les problèmes fréquents.
+- [`DEV_DOC.md`](./DEV_DOC.md) — documentation technique : architecture,
+  détail de chaque conteneur, gestion des volumes et du réseau, variables
+  d'environnement, conformité avec le sujet 42.
 
-Identifiants définis dans `srcs/.env` :
-- Utilisateur : valeur de `WP_ADMIN`
-- Mot de passe : valeur de `WP_ADMIN_PASSWORD`
+## Prérequis
 
-Un second utilisateur (rôle "author") est créé automatiquement au premier
-démarrage, avec les identifiants `USER1_LOGIN` / `USER1_PASSWORD`.
+- Docker Engine + Docker Compose plugin (`docker compose`, pas `docker-compose`)
+- `make`
+- Droits d'écriture dans `/home/lenakach/data`
 
-## 4. Configuration (`srcs/.env`)
+## Statut / TODO
 
-| Variable              | Description                                   |
-|-----------------------|------------------------------------------------|
-| `MYSQL_DATABASE`      | Nom de la base WordPress                        |
-| `MYSQL_USER`          | Utilisateur MySQL applicatif                    |
-| `MYSQL_PASSWORD`      | Mot de passe de cet utilisateur                 |
-| `MYSQL_ROOT_PASSWORD` | Mot de passe root MariaDB                       |
-| `DOMAIN_NAME`         | Nom de domaine du site (`leakache.42.fr`)       |
-| `WP_ADMIN`            | Identifiant admin WordPress                     |
-| `WP_ADMIN_PASSWORD`   | Mot de passe admin WordPress                    |
-| `WP_ADMIN_EMAIL`      | Email admin WordPress                           |
-| `USER1_LOGIN`         | Identifiant du second utilisateur WordPress     |
-| `USER1_MAIL`          | Email du second utilisateur                     |
-| `USER1_PASSWORD`      | Mot de passe du second utilisateur              |
-| `DATA_PATH`           | Dossier hôte où sont stockées les données       |
+- [ ] Docker secrets pour les identifiants sensibles (actuellement en `.env`)
+- [x] Volumes stockés sous `/home/lenakach/data`
+- [ ] Bonus (Redis, Adminer, FTP, etc. — non implémentés actuellement)
 
-> ⚠️ Ne jamais commiter un `.env` avec de vrais secrets sur un repo public.
+## Auteur
 
-## 5. Arrêter / redémarrer le projet
-
-```bash
-make down      # arrête les conteneurs (les données sont conservées)
-make up        # relance les conteneurs existants
-make re        # tout supprime et relance depuis zéro (perte des données)
-```
-
-## 6. Où sont mes données ?
-
-Les données persistent sur la machine hôte (pas seulement dans le
-conteneur), sous :
-
-```
-/home/lenakach/data/mariadb     → base de données MariaDB
-/home/lenakach/data/wordpress   → fichiers WordPress (thèmes, plugins, uploads...)
-```
-
-Elles survivent donc à un `docker compose down` ou à la suppression des
-conteneurs. Seul `make fclean` les efface.
-
-## 7. Support
-
-Pour toute question technique sur le fonctionnement interne
-(Dockerfiles, réseau, volumes, choix d'implémentation), voir `DEV_DOC.md`.
+`lenakach` — 42 Paris
