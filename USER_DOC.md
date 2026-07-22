@@ -106,17 +106,7 @@ conteneur), sous :
 Elles survivent donc à un `docker compose down` ou à la suppression des
 conteneurs. Seul `make fclean` les efface.
 
-## 7. Problèmes fréquents
-
-| Symptôme                                     | Cause probable / solution                                                        |
-|-----------------------------------------------|-------------------------------------------------------------------------------------|
-| Le navigateur ne trouve pas `leakache.42.fr`  | Entrée manquante dans `/etc/hosts`                                                 |
-| "Connexion non sécurisée" au chargement       | Normal : certificat auto-signé, cliquer sur "Continuer"                            |
-| `docker compose up` échoue sur les volumes    | Le dossier `/home/lenakach/data/...` n'existe pas encore → relancer `make build`   |
-| Page blanche / erreur 502                     | Le conteneur `wordpress` n'est pas encore prêt → attendre quelques secondes        |
-| Modifs WordPress perdues après `make re`      | Comportement normal, `fclean` supprime les données host                            |
-
-## 8. Support
+## 7. Support
 
 Pour toute question technique sur le fonctionnement interne
 (Dockerfiles, réseau, volumes, choix d'implémentation), voir `DEV_DOC.md`.
