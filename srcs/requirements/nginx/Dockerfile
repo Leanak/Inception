@@ -18,8 +18,6 @@ RUN mkdir -p /etc/nginx/ssl && \
 
 COPY conf/nginx.conf /etc/nginx/sites-available/default
 
-RUN nginx -t
-
 EXPOSE 443
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
