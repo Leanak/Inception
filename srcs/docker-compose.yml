@@ -25,6 +25,7 @@ services:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
+    restart: always
     depends_on:
       mariadb:
         condition : service_healthy
@@ -51,6 +52,7 @@ services:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
+    restart: always
     depends_on:
       - wordpress
     env_file:
