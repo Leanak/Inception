@@ -14,7 +14,7 @@ RUN mkdir -p /etc/nginx/ssl && \
     -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/inception.key \
     -out /etc/nginx/ssl/inception.crt \
-    -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=leakache.42.fr"
+    -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=lenakach.42.fr"
 
 COPY conf/nginx.conf /etc/nginx/sites-available/default
 
