@@ -143,18 +143,6 @@ dossiers hôte cibles — contrairement à un volume nommé "classique". Le
 `${DATA_PATH}/wordpress` (`mkdir -p`) **avant** le premier
 `docker compose up`, sinon Compose échoue avec une erreur de montage.
 
-### 4.4 Alternative (non retenue)
-
-Un bind mount direct sans volume nommé :
-```yaml
-volumes:
-  - /home/lenakach/data/mariadb:/var/lib/mysql
-```
-fonctionnerait aussi et créerait le dossier automatiquement, mais ne
-fait pas apparaître de volumes nommés dans le bloc `volumes:` du
-compose file — préférer la solution en 4.2 pour rester proche des
-attentes classiques de correction 42.
-
 ## 5. Variables d'environnement / secrets
 
 Actuellement tout passe par `srcs/.env`, chargé par Compose
@@ -162,9 +150,6 @@ automatiquement (fichier au nom `.env`) et explicitement via `env_file`
 pour `wordpress` et `nginx`. Les mots de passe transitent donc en clair
 dans les variables d'environnement du conteneur.
 
-**Amélioration prévue (voir `todo.txt`)** : migrer les secrets vers
-Docker Secrets (`docker compose secrets`), en les lisant côté
-`init.sh` via `/run/secrets/<nom>` plutôt que via `$VARIABLE`.
 
 ## 6. Conformité avec le sujet Inception (check-list)
 
@@ -179,12 +164,3 @@ Docker Secrets (`docker compose secrets`), en les lisant côté
 - [x] Volumes persistants sous `/home/<login>/data`
 - [x] Redémarrage automatique des conteneurs en cas de crash
       (`restart: always` — à vérifier/ajouter sur tous les services)
-- [ ] Docker Secrets pour les données sensibles
-
-## 7. Pistes d'évolution
-
-- Ajouter `restart: always` (ou `unless-stopped`) sur les 3 services de
-  façon homogène.
-- Passer les mots de passe en Docker Secrets.
-- Ajouter des `healthcheck` sur `wordpress` et `nginx`.
-- Implémenter les bonus si la partie obligatoire est jugée "parfaite".
