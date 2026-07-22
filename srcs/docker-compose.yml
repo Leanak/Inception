@@ -27,7 +27,7 @@ services:
       - inception_network
     restart: always
     healthcheck:
-      test: ["CMD", "pgrep", "php-fp;8,4"]
+      test: ["CMD", "pgrep", "php-fpm8.4"]
       interval: 10s
       timeout: 5s
       retries: 5
